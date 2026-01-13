@@ -6,7 +6,7 @@ interface ButtonProps {
   onClick?: () => void;
   icon?: LucideIcon;
   iconPosition?: 'left' | 'right';
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   disabled?: boolean;
@@ -27,14 +27,18 @@ export default function Button({
   className = ''
 }: ButtonProps) {
   
-  const baseStyles = 'font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2';
+  // === ESTILOS BASE ===
+  const baseStyles = 'font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2';
   
+  // === VARIANTES DE COR ===
   const variants = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 disabled:bg-blue-300 disabled:cursor-not-allowed',
     secondary: 'bg-gray-600 text-white hover:bg-gray-700 active:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed',
-    outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50 active:bg-blue-100 disabled:border-blue-300 disabled:text-blue-300 disabled:cursor-not-allowed'
+    outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50 active:bg-blue-100 disabled:border-blue-300 disabled:text-blue-300 disabled:cursor-not-allowed',
+    ghost: 'text-gray-600 hover:bg-gray-100 active:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed'
   };
   
+  // === TAMANHOS ===
   const sizes = {
     sm: 'px-3 py-2 text-sm',
     md: 'px-4 py-2.5 text-sm',

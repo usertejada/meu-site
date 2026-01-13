@@ -15,7 +15,8 @@ export default function PageHeader({
 }: PageHeaderProps) {
   return (
     <>
-      {/* Versão Desktop - oculta no mobile */}
+      {/* === VERSÃO DESKTOP === */}
+      {/* Layout horizontal: título à esquerda, ação à direita */}
       <div className="hidden lg:flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-800 mb-1">{title}</h1>
@@ -24,7 +25,8 @@ export default function PageHeader({
         {action && <div>{action}</div>}
       </div>
 
-      {/* Versão Mobile - oculta no desktop */}
+      {/* === VERSÃO MOBILE === */}
+      {/* Layout vertical: título no topo, ação embaixo */}
       <div className="lg:hidden mb-8">
         <div className="mb-7">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">{title}</h1>

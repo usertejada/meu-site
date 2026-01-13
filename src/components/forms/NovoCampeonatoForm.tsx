@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Trophy, Footprints, Circle, Disc, Flame, Hand, MapPin, Target, Award, Clock } from 'lucide-react';
+import { Trophy, MapPin } from 'lucide-react';
+import { GiSoccerBall, GiBasketballBall, GiVolleyballBall, GiSoccerField } from 'react-icons/gi';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
-import Select, { SelectOption } from '@/components/common/Select';
+import Dropdown, { DropdownOption } from '@/components/common/Dropdown';
+import DatePicker from '@/components/common/DatePicker';
 
 interface NovoCampeonatoFormProps {
   isOpen: boolean;
@@ -10,6 +12,7 @@ interface NovoCampeonatoFormProps {
 }
 
 export default function NovoCampeonatoForm({ isOpen, onClose }: NovoCampeonatoFormProps) {
+  // === ESTADO DO FORMULÁRIO ===
   const [formData, setFormData] = useState({
     nome: '',
     modalidade: 'Futebol',
@@ -21,38 +24,39 @@ export default function NovoCampeonatoForm({ isOpen, onClose }: NovoCampeonatoFo
     cidade: 'Tabatinga'
   });
 
-  // Opções de Modalidade com ícones
-  const modalidadeOptions: SelectOption[] = [
-    { value: 'Futebol', label: 'Futebol', icon: Footprints },
-    { value: 'Basquete', label: 'Basquete', icon: Circle },
-    { value: 'Vôlei', label: 'Vôlei', icon: Disc },
-    { value: 'Futsal', label: 'Futsal', icon: Flame },
-    { value: 'Handebol', label: 'Handebol', icon: Hand }
+  // === OPÇÕES DE MODALIDADE (Com ícones do React Icons) ===
+  const modalidadeOptions: DropdownOption[] = [
+    { value: 'Futebol', label: 'Futebol', icon: GiSoccerBall, iconType: 'react-icons' },
+    { value: 'Basquete', label: 'Basquete', icon: GiBasketballBall, iconType: 'react-icons' },
+    { value: 'Vôlei', label: 'Vôlei', icon: GiVolleyballBall, iconType: 'react-icons' },
+    { value: 'Futsal', label: 'Futsal', icon: GiSoccerField, iconType: 'react-icons' },
+    { value: 'Handebol', label: 'Handebol', icon: GiSoccerField, iconType: 'react-icons' }
   ];
 
-  // Opções de Formato com ícones
-  const formatoOptions: SelectOption[] = [
-    { value: 'Pontos Corridos', label: 'Pontos Corridos', icon: Target },
-    { value: 'Eliminatória', label: 'Eliminatória', icon: Award },
-    { value: 'Mata-Mata', label: 'Mata-Mata', icon: Trophy },
-    { value: 'Grupos + Eliminatórias', label: 'Grupos + Eliminatórias', icon: Target }
+  // === OPÇÕES DE FORMATO (SEM ícones) ===
+  const formatoOptions: DropdownOption[] = [
+    { value: 'Pontos Corridos', label: 'Pontos Corridos' },
+    { value: 'Eliminatória', label: 'Eliminatória' },
+    { value: 'Mata-Mata', label: 'Mata-Mata' },
+    { value: 'Grupos + Eliminatórias', label: 'Grupos + Eliminatórias' }
   ];
 
-  // Opções de Status com ícones
-  const statusOptions: SelectOption[] = [
-    { value: 'Planejamento', label: 'Planejamento', icon: Clock },
-    { value: 'Inscrições', label: 'Inscrições', icon: Award },
-    { value: 'Em Andamento', label: 'Em Andamento', icon: Trophy },
-    { value: 'Finalizado', label: 'Finalizado', icon: Target }
+  // === OPÇÕES DE STATUS (SEM ícones) ===
+  const statusOptions: DropdownOption[] = [
+    { value: 'Planejamento', label: 'Planejamento' },
+    { value: 'Inscrições', label: 'Inscrições' },
+    { value: 'Em Andamento', label: 'Em Andamento' },
+    { value: 'Finalizado', label: 'Finalizado' }
   ];
 
-  // Opções de Cidade com ícones
-  const cidadeOptions: SelectOption[] = [
-    { value: 'Tabatinga', label: 'Tabatinga', icon: MapPin },
-    { value: 'Benjamin', label: 'Benjamin', icon: MapPin },
-    { value: 'Umariaçu', label: 'Umariaçu', icon: MapPin }
+  // === OPÇÕES DE CIDADE (Com ícone do Lucide) ===
+  const cidadeOptions: DropdownOption[] = [
+    { value: 'Tabatinga', label: 'Tabatinga', icon: MapPin, iconType: 'lucide' },
+    { value: 'Benjamin', label: 'Benjamin', icon: MapPin, iconType: 'lucide' },
+    { value: 'Umariaçu', label: 'Umariaçu', icon: MapPin, iconType: 'lucide' }
   ];
 
+  // === HANDLERS ===
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Dados do formulário:', formData);
@@ -60,7 +64,7 @@ export default function NovoCampeonatoForm({ isOpen, onClose }: NovoCampeonatoFo
     onClose();
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -78,7 +82,7 @@ export default function NovoCampeonatoForm({ isOpen, onClose }: NovoCampeonatoFo
       maxWidth="lg"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Nome e Modalidade */}
+        {/* === NOME E DATA DE INÍCIO === */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -97,18 +101,19 @@ export default function NovoCampeonatoForm({ isOpen, onClose }: NovoCampeonatoFo
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Modalidade
+              Data de Início <span className="text-red-500">*</span>
             </label>
-            <Select
-              name="modalidade"
-              value={formData.modalidade}
-              onChange={handleChange}
-              options={modalidadeOptions}
+            <DatePicker
+              name="dataInicio"
+              value={formData.dataInicio}
+              onChange={(value) => setFormData({ ...formData, dataInicio: value })}
+              placeholder="Selecione a data"
+              required
             />
           </div>
         </div>
 
-        {/* Descrição */}
+        {/* === DESCRIÇÃO === */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Descrição
@@ -123,45 +128,43 @@ export default function NovoCampeonatoForm({ isOpen, onClose }: NovoCampeonatoFo
           />
         </div>
 
-        {/* Datas */}
+        {/* === MODALIDADE E FORMATO === */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Data de Início <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              name="dataInicio"
-              value={formData.dataInicio}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-          </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Formato
             </label>
-            <Select
+            <Dropdown
               name="formato"
               value={formData.formato}
-              onChange={handleChange}
+              onChange={(value) => setFormData({ ...formData, formato: value })}
               options={formatoOptions}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Modalidade
+            </label>
+            <Dropdown
+              name="modalidade"
+              value={formData.modalidade}
+              onChange={(value) => setFormData({ ...formData, modalidade: value })}
+              options={modalidadeOptions}
             />
           </div>
         </div>
 
-        {/* Status e Cidade */}
+        {/* === STATUS E CIDADE === */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Status
             </label>
-            <Select
+            <Dropdown
               name="status"
               value={formData.status}
-              onChange={handleChange}
+              onChange={(value) => setFormData({ ...formData, status: value })}
               options={statusOptions}
             />
           </div>
@@ -170,16 +173,16 @@ export default function NovoCampeonatoForm({ isOpen, onClose }: NovoCampeonatoFo
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Cidade
             </label>
-            <Select
+            <Dropdown
               name="cidade"
               value={formData.cidade}
-              onChange={handleChange}
+              onChange={(value) => setFormData({ ...formData, cidade: value })}
               options={cidadeOptions}
             />
           </div>
         </div>
 
-        {/* Botões */}
+        {/* === BOTÕES === */}
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
           <Button
             type="button"
