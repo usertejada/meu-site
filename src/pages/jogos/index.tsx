@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { Calendar, Clock, MapPin, Edit, Zap, Share2, Plus } from 'lucide-react';
+import { Zap, Share2, Plus } from 'lucide-react';
 import PageHeader from '@/components/common/PageHeader';
 import SearchInput from '@/components/common/SearchInput';
 import Dropdown, { DropdownOption } from '@/components/common/Dropdown';
 import FilterTabs from '@/components/common/FilterTabs';
-import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
-import Icon from '@/components/common/Icon';
+import MatchCard from '@/components/common/MatchCard';
 import NovoJogoForm, { NovoJogoData } from '@/components/forms/NovoJogosForm';
 
 // Tipos
@@ -18,6 +17,8 @@ interface Jogo {
   local: string;
   timeA: string;
   timeB: string;
+  logoA?: string;
+  logoB?: string;
   placarA: number;
   placarB: number;
   rodada: number;
@@ -34,6 +35,8 @@ const jogosMock: Jogo[] = [
     local: 'Allianz Parque',
     timeA: 'Palmeiras',
     timeB: 'Flamengo',
+    logoA: 'https://logodetimes.com/times/palmeiras/logo-palmeiras-256.png',
+    logoB: 'https://logodetimes.com/times/flamengo/logo-flamengo-256.png',
     placarA: 0,
     placarB: 0,
     rodada: 3,
@@ -47,6 +50,8 @@ const jogosMock: Jogo[] = [
     local: 'Arena Corinthians',
     timeA: 'Corinthians',
     timeB: 'São Paulo',
+    logoA: 'https://logodetimes.com/times/corinthians/logo-corinthians-256.png',
+    logoB: 'https://logodetimes.com/times/sao-paulo/logo-sao-paulo-256.png',
     placarA: 1,
     placarB: 3,
     rodada: 2,
@@ -60,9 +65,26 @@ const jogosMock: Jogo[] = [
     local: 'Estádio Maracanã',
     timeA: 'Fluminense',
     timeB: 'Botafogo',
+    logoA: 'https://logodetimes.com/times/fluminense/logo-fluminense-256.png',
+    logoB: 'https://logodetimes.com/times/botafogo/logo-botafogo-256.png',
     placarA: 2,
     placarB: 2,
     rodada: 1,
+    status: 'finalizado'
+  },
+  {
+    id: '4',
+    campeonato: 'Campeonato Brasileiro',
+    data: '28 de dezembro',
+    hora: '18:00',
+    local: 'Neo Química Arena',
+    timeA: 'Corinthians',
+    timeB: 'Santos',
+    logoA: 'https://logodetimes.com/times/corinthians/logo-corinthians-256.png',
+    logoB: 'https://logodetimes.com/times/santos/logo-santos-256.png',
+    placarA: 3,
+    placarB: 1,
+    rodada: 3,
     status: 'finalizado'
   }
 ];
@@ -97,20 +119,19 @@ export default function JogosPage() {
     return matchBusca && matchCampeonato && matchStatus;
   });
 
+  // Agrupa jogos por campeonato
+  const jogosAgrupados = jogosFiltrados.reduce((grupos, jogo) => {
+    const campeonato = jogo.campeonato;
+    if (!grupos[campeonato]) {
+      grupos[campeonato] = [];
+    }
+    grupos[campeonato].push(jogo);
+    return grupos;
+  }, {} as Record<string, Jogo[]>);
+
   const handleNovoJogo = (data: NovoJogoData) => {
     console.log('Novo jogo criado:', data);
     // Aqui você faria a chamada à API para criar o jogo
-  };
-
-  const getStatusBadge = (status: Jogo['status']) => {
-    switch (status) {
-      case 'agendado':
-        return <Badge variant="info">Agendado</Badge>;
-      case 'ao-vivo':
-        return <Badge variant="warning">Ao Vivo</Badge>;
-      case 'finalizado':
-        return <Badge variant="default">Finalizado</Badge>;
-    }
   };
 
   return (
@@ -166,81 +187,43 @@ export default function JogosPage() {
 
         {/* Filtros */}
         <FilterTabs
-          options={['Todos', 'Agendados', 'Ao Vivo', 'Finalizados']}
+          options={['Todos', 'Agendados', 'Vivo', 'Finalizados']}
           active={filtroAtivo}
           onChange={setFiltroAtivo}
           className="mb-6"
         />
 
-        {/* Lista de Jogos */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {jogosFiltrados.map((jogo) => (
-            <div
-              key={jogo.id}
-              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow"
-            >
-              {/* Header do Card */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800 mb-1">
-                    {jogo.campeonato}
-                  </h3>
-                  {getStatusBadge(jogo.status)}
-                </div>
-                
-                <button className="text-gray-400 hover:text-gray-600 transition-colors p-1">
-                  <Icon icon={Edit} size={18} />
-                </button>
-              </div>
+        {/* Lista de Jogos Agrupados por Campeonato */}
+        <div className="space-y-8">
+          {Object.entries(jogosAgrupados).map(([campeonato, jogos]) => (
+            <div key={campeonato}>
+              {/* Título do Campeonato */}
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                {campeonato}
+              </h2>
 
-              {/* Informações do Jogo */}
-              <div className="space-y-2 mb-6">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Icon icon={Calendar} size={16} className="text-gray-400" />
-                  <span>{jogo.data}</span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Icon icon={Clock} size={16} className="text-gray-400" />
-                  <span>{jogo.hora}</span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Icon icon={MapPin} size={16} className="text-gray-400" />
-                  <span>{jogo.local}</span>
-                </div>
-              </div>
-
-              {/* Placar */}
-              <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center">
-                <div className="text-center">
-                  <p className="text-sm font-medium text-gray-700 mb-2">
-                    {jogo.timeA}
-                  </p>
-                  <p className="text-3xl font-bold text-purple-600">
-                    {jogo.placarA}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-center">
-                  <span className="text-2xl font-light text-gray-400">×</span>
-                </div>
-
-                <div className="text-center">
-                  <p className="text-sm font-medium text-gray-700 mb-2">
-                    {jogo.timeB}
-                  </p>
-                  <p className="text-3xl font-bold text-purple-600">
-                    {jogo.placarB}
-                  </p>
-                </div>
-              </div>
-
-              {/* Rodada */}
-              <div className="mt-6 flex justify-center">
-                <Badge variant="success" size="md">
-                  Rodada {jogo.rodada}
-                </Badge>
+              {/* Grid de Jogos */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {jogos.map((jogo) => (
+                  <MatchCard
+                    key={jogo.id}
+                    rodada={jogo.rodada}
+                    date={jogo.data}
+                    time={jogo.hora}
+                    homeTeam={{ 
+                      name: jogo.timeA, 
+                      score: jogo.placarA,
+                      logo: jogo.logoA
+                    }}
+                    awayTeam={{ 
+                      name: jogo.timeB, 
+                      score: jogo.placarB,
+                      logo: jogo.logoB
+                    }}
+                    venue={jogo.local}
+                    status={jogo.status}
+                  />
+                ))}
               </div>
             </div>
           ))}
@@ -259,7 +242,6 @@ export default function JogosPage() {
             </Button>
           </div>
         )}
-    
 
       {/* Modal de Novo Jogo */}
       <NovoJogoForm
