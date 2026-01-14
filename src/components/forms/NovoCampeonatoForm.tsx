@@ -79,7 +79,7 @@ export default function NovoCampeonatoForm({ isOpen, onClose }: NovoCampeonatoFo
       icon={Trophy}
       iconColor="text-blue-600"
       iconBg="bg-blue-100"
-      maxWidth="lg"
+      maxWidth="xl"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* === NOME E DATA DE INÍCIO === */}
@@ -99,18 +99,15 @@ export default function NovoCampeonatoForm({ isOpen, onClose }: NovoCampeonatoFo
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Data de Início <span className="text-red-500">*</span>
-            </label>
-            <DatePicker
-              name="dataInicio"
-              value={formData.dataInicio}
-              onChange={(value) => setFormData({ ...formData, dataInicio: value })}
-              placeholder="Selecione a data"
-              required
-            />
-          </div>
+          {/* NOVO DATEPICKER AQUI */}
+          <DatePicker
+            name="dataInicio"
+            value={formData.dataInicio}
+            onChange={(value) => setFormData({ ...formData, dataInicio: value })}
+            label="Data de Início"
+            placeholder="Data"
+            required
+          />
         </div>
 
         {/* === DESCRIÇÃO === */}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import Icon from './Icon';
 
 interface DatePickerProps {
   name: string;
@@ -8,18 +9,26 @@ interface DatePickerProps {
   placeholder?: string;
   required?: boolean;
   label?: string;
+  disabled?: boolean;
 }
 
 export default function DatePicker({
   name,
   value,
   onChange,
-  placeholder = 'Selecione',
+  placeholder = 'Selecione a data',
   required = false,
-  label
+  label,
+  disabled = false
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    if (value) {
+      const [year, month] = value.split('-');
+      return new Date(parseInt(year), parseInt(month) - 1);
+    }
+    return new Date();
+  });
 
   const meses = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -34,23 +43,20 @@ export default function DatePicker({
     return `${dia}/${mes}/${ano}`;
   };
 
-  const gerarDiasDoMes = (month: Date) => {
-    const ano = month.getFullYear();
-    const mes = month.getMonth();
+  const gerarDias = () => {
+    const ano = currentMonth.getFullYear();
+    const mes = currentMonth.getMonth();
     
-    const primeiroDia = new Date(ano, mes, 1);
-    const ultimoDia = new Date(ano, mes + 1, 0);
-    
-    const diasAnteriores = primeiroDia.getDay();
-    const diasNoMes = ultimoDia.getDate();
+    const primeiroDia = new Date(ano, mes, 1).getDay();
+    const ultimoDia = new Date(ano, mes + 1, 0).getDate();
     
     const dias: (number | null)[] = [];
     
-    for (let i = 0; i < diasAnteriores; i++) {
+    for (let i = 0; i < primeiroDia; i++) {
       dias.push(null);
     }
     
-    for (let i = 1; i <= diasNoMes; i++) {
+    for (let i = 1; i <= ultimoDia; i++) {
       dias.push(i);
     }
     
@@ -61,9 +67,7 @@ export default function DatePicker({
     const ano = currentMonth.getFullYear();
     const mes = String(currentMonth.getMonth() + 1).padStart(2, '0');
     const diaStr = String(dia).padStart(2, '0');
-    
-    const novaData = `${ano}-${mes}-${diaStr}`;
-    onChange(novaData);
+    onChange(`${ano}-${mes}-${diaStr}`);
     setIsOpen(false);
   };
 
@@ -77,7 +81,7 @@ export default function DatePicker({
     );
   };
 
-  const isDiaAtual = (dia: number) => {
+  const isDiaHoje = (dia: number) => {
     const hoje = new Date();
     return (
       dia === hoje.getDate() &&
@@ -87,11 +91,24 @@ export default function DatePicker({
   };
 
   const navegarMes = (direcao: number) => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + direcao));
+    setCurrentMonth(new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth() + direcao
+    ));
+  };
+
+  const irParaHoje = () => {
+    const hoje = new Date();
+    setCurrentMonth(hoje);
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    const dia = String(hoje.getDate()).padStart(2, '0');
+    onChange(`${ano}-${mes}-${dia}`);
+    setIsOpen(false);
   };
 
   return (
-    <>
+    <div>
       {label && (
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {label} {required && <span className="text-red-500">*</span>}
@@ -100,23 +117,26 @@ export default function DatePicker({
       
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
-        className="w-full flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-1 focus:ring-blue-500"
+        onClick={() => !disabled && setIsOpen(true)}
+        disabled={disabled}
+        className="w-full flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
       >
-        <Calendar size={18} className="text-gray-600" />
+        <Icon icon={Calendar} size={18} className="text-gray-400" />
         <span className={value ? 'text-gray-700' : 'text-gray-400'}>
           {value ? formatarData(value) : placeholder}
         </span>
       </button>
 
-      {/* Modal do Calendário */}
+      {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[99999] flex items-center justify-center p-4">
+          {/* Backdrop */}
           <div 
             className="absolute inset-0" 
             onClick={() => setIsOpen(false)}
           />
           
+          {/* Card do Calendário */}
           <div 
             className="relative bg-white rounded-xl shadow-2xl w-full max-w-sm"
             onClick={(e) => e.stopPropagation()}
@@ -129,7 +149,7 @@ export default function DatePicker({
                 type="button"
                 className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <X size={16} className="text-gray-500" />
+                <Icon icon={X} size={16} className="text-gray-500" />
               </button>
             </div>
 
@@ -142,7 +162,7 @@ export default function DatePicker({
                   onClick={() => navegarMes(-1)}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                  <ChevronLeft size={20} className="text-gray-600" />
+                  <Icon icon={ChevronLeft} size={20} className="text-gray-600" />
                 </button>
                 
                 <span className="font-semibold text-gray-800">
@@ -154,7 +174,7 @@ export default function DatePicker({
                   onClick={() => navegarMes(1)}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                  <ChevronRight size={20} className="text-gray-600" />
+                  <Icon icon={ChevronRight} size={20} className="text-gray-600" />
                 </button>
               </div>
 
@@ -169,8 +189,8 @@ export default function DatePicker({
 
               {/* Dias do Mês */}
               <div className="grid grid-cols-7 gap-1">
-                {gerarDiasDoMes(currentMonth).map((dia, index) => (
-                  <div key={index}>
+                {gerarDias().map((dia, idx) => (
+                  <div key={idx}>
                     {dia ? (
                       <button
                         type="button"
@@ -178,7 +198,7 @@ export default function DatePicker({
                         className={`w-full aspect-square flex items-center justify-center text-sm rounded-lg transition-colors ${
                           isDiaSelecionado(dia)
                             ? 'bg-blue-600 text-white font-semibold hover:bg-blue-700'
-                            : isDiaAtual(dia)
+                            : isDiaHoje(dia)
                             ? 'bg-blue-100 text-blue-600 font-medium hover:bg-blue-200'
                             : 'hover:bg-gray-100 text-gray-700'
                         }`}
@@ -186,7 +206,7 @@ export default function DatePicker({
                         {dia}
                       </button>
                     ) : (
-                      <div className="w-full aspect-square" />
+                      <div />
                     )}
                   </div>
                 ))}
@@ -196,14 +216,7 @@ export default function DatePicker({
               <div className="mt-4 pt-3 border-t border-gray-200">
                 <button
                   type="button"
-                  onClick={() => {
-                    const hoje = new Date();
-                    const ano = hoje.getFullYear();
-                    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-                    const dia = String(hoje.getDate()).padStart(2, '0');
-                    onChange(`${ano}-${mes}-${dia}`);
-                    setIsOpen(false);
-                  }}
+                  onClick={irParaHoje}
                   className="w-full px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                 >
                   Hoje
@@ -215,6 +228,6 @@ export default function DatePicker({
       )}
 
       <input type="hidden" name={name} value={value} required={required} />
-    </>
+    </div>
   );
 }

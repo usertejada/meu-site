@@ -123,26 +123,23 @@ export default function Campeonato() {
       />
 
       {/* === BUSCA E FILTROS === */}
-      <div className="flex flex-col md:flex-row items-stretch gap-3 mb-6">
+      <div className="flex flex-col md:flex-row gap-3 mb-6">
         {/* Busca - ocupa todo espaço disponível */}
         <div className="flex-1">
           <div className="relative w-full">
             <SearchInput
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
-              placeholder="Buscar campeonatos..."
-              maxWidth="max-w-none"
             />
           </div>
         </div>
 
         {/* Filtros - ocupa largura completa em tablet+ */}
-        <div className="w-full md:flex-1">
+        <div>
           <FilterTabs
             options={filtros}
             active={filtroAtivo}
             onChange={setFiltroAtivo}
-            className="md:w-full"
           />
         </div>
       </div>

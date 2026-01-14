@@ -144,8 +144,6 @@ export default function Times() {
           <SearchInput
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            placeholder="Buscar times..."
-            maxWidth="max-w-none"
           />
         </div>
 

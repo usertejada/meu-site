@@ -1,3 +1,4 @@
+// components/common/Dropdown.tsx
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { LucideIcon, ChevronDown } from 'lucide-react';
@@ -14,6 +15,7 @@ export interface DropdownOption {
 
 interface DropdownProps {
   name: string;
+  label?: string; // ← ADICIONE ESTA LINHA
   value: string;
   onChange: (value: string) => void;
   options: DropdownOption[];
@@ -25,6 +27,7 @@ interface DropdownProps {
 
 export default function Dropdown({
   name,
+  label, // ← ADICIONE ESTA LINHA
   value,
   onChange,
   options,
@@ -57,7 +60,6 @@ export default function Dropdown({
     if (isOpen) {
       updatePosition();
 
-      // Detecta scroll em qualquer elemento
       const handleScroll = () => {
         updatePosition();
       };
@@ -119,66 +121,78 @@ export default function Dropdown({
 
   return (
     <>
-      <div className={`relative ${className}`}>
-        <button
-          ref={buttonRef}
-          type="button"
-          onClick={() => !disabled && setIsOpen(!isOpen)}
-          disabled={disabled}
-          className={`w-full flex items-center justify-between gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors ${
-            isOpen ? 'ring-1 ring-blue-500' : ''
-          }`}
-        >
-          <div className="flex items-center gap-2 flex-1">
-            {selectedOption?.icon && renderIcon(selectedOption)}
-            <span className={selectedOption ? 'text-gray-700' : 'text-gray-400'}>
-              {selectedOption ? selectedOption.label : placeholder}
-            </span>
-          </div>
-          
-          <Icon 
-            icon={ChevronDown} 
-            size={18} 
-            className={`text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          />
-        </button>
+      <div className={className}>
+        {/* ← ADICIONE ESTE BLOCO */}
+        {label && (
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            {label}
+            {required && <span className="text-red-500 ml-1">*</span>}
+          </label>
+        )}
+        
+        <div className="relative">
+          <button
+            ref={buttonRef}
+            type="button"
+            onClick={() => !disabled && setIsOpen(!isOpen)}
+            disabled={disabled}
+            className={`w-full flex items-center justify-between gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors ${
+              isOpen ? 'ring-1 ring-blue-500' : ''
+            }`}
+          >
+            <div className="flex items-center gap-2 flex-1">
+              {selectedOption?.icon && renderIcon(selectedOption)}
+              <span className={selectedOption ? 'text-gray-700' : 'text-gray-400'}>
+                {selectedOption ? selectedOption.label : placeholder}
+              </span>
+            </div>
+            
+            <Icon 
+              icon={ChevronDown} 
+              size={18} 
+              className={`text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
 
-        <input
-          type="hidden"
-          name={name}
-          value={value}
-          required={required}
-        />
+          <input
+            type="hidden"
+            name={name}
+            value={value}
+            required={required}
+          />
+        </div>
       </div>
 
-      {isOpen && createPortal(
-        <div
-          ref={dropdownRef}
-          style={{
-            position: 'absolute',
-            top: `${position.top + 4}px`,
-            left: `${position.left}px`,
-            width: `${position.width}px`,
-            zIndex: 99999
-          }}
-          className="bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"
-        >
-          {options.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => handleSelect(option.value)}
-              className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm text-left hover:bg-blue-50 transition-colors ${
-                option.value === value ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
-              }`}
-            >
-              {option.icon && renderIcon(option)}
-              <span>{option.label}</span>
-            </button>
-          ))}
-        </div>,
-        document.body
-      )}
+      {isOpen && typeof window !== 'undefined' && createPortal(
+  <div
+    ref={dropdownRef}
+    style={{
+      position: 'absolute',
+      top: `${position.top + 4}px`,
+      left: `${position.left}px`,
+      width: `${position.width}px`,
+      zIndex: 99999
+    }}
+    className="bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+  >
+    {options.map((option) => (
+      <button
+        key={option.value}
+        type="button"
+        onClick={() => handleSelect(option.value)}
+        className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm text-left hover:bg-blue-50 transition-colors ${
+          option.value === value ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+        }`}
+      >
+        {option.icon && renderIcon(option)}
+        <span>{option.label}</span>
+      </button>
+    ))}
+  </div>,
+  document.body
+)}
+
+
     </>
   );
 }

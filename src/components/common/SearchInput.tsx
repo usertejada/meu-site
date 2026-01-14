@@ -13,29 +13,28 @@ interface SearchInputProps {
 export default function SearchInput({
   value,
   onChange,
-  placeholder = 'Buscar...',
+  placeholder = 'Buscar...',  // ← MUDEI AQUI
   disabled = false,
   className = '',
-  maxWidth = 'lg:max-w-md'
+  maxWidth = 'max-w-md'
 }: SearchInputProps) {
   
   return (
-    <div className={`relative flex-1 ${maxWidth}`}>
+    <div className={`relative w-full ${maxWidth}`}>
       {/* === ÍCONE DE BUSCA === */}
-      <Icon 
-        icon={Search} 
-        size={18} 
-        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" 
+      <Search 
+        size={20} 
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" 
       />
       
       {/* === INPUT === */}
       <input
-        type="text"
+        type="search"
         value={value}
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}
-        className={`w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors ${className}`}
+        className={`block w-full pl-11 pr-4 py-2 text-base text-gray-500 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-transparent placeholder:text-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors ${className}`}
       />
     </div>
   );

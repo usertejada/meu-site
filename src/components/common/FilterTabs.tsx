@@ -1,3 +1,4 @@
+// components/FilterTabs.tsx
 interface FilterTabsProps {
   options: string[];
   active: string;
@@ -13,16 +14,18 @@ export default function FilterTabs({
 }: FilterTabsProps) {
   
   return (
-    <div className={`flex items-center gap-2 bg-white border border-gray-300 rounded-lg p-1 overflow-x-auto ${className}`}>
+    <div className={`inline-flex items-center gap-1 bg-gray-50 p-1 rounded-lg ${className}`}>
       {options.map((option) => (
         <button
           key={option}
           onClick={() => onChange(option)}
-          className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-            active === option
-              ? 'bg-blue-50 text-blue-600'
-              : 'text-gray-700 hover:bg-gray-50'
-          }`}
+          className={`
+            px-3 py-2 text-sm font-medium rounded-md transition-all
+            ${active === option 
+              ? 'bg-white text-blue-600 shadow-sm' 
+              : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+            }
+          `}
         >
           {option}
         </button>
