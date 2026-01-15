@@ -7,6 +7,7 @@ import FilterTabs from '@/components/common/FilterTabs';
 import Button from '@/components/common/Button';
 import MatchCard from '@/components/common/MatchCard';
 import NovoJogoForm, { NovoJogoData } from '@/components/forms/NovoJogosForm';
+import NovoResultadoForm, { ResultadoData } from '@/components/forms/NovoResultadoForm';
 
 // Tipos
 interface Jogo {
@@ -101,6 +102,8 @@ export default function JogosPage() {
   const [campeonatoSelecionado, setCampeonatoSelecionado] = useState('todos');
   const [filtroAtivo, setFiltroAtivo] = useState('Todos');
   const [modalAberto, setModalAberto] = useState(false);
+  const [modalResultadoAberto, setModalResultadoAberto] = useState(false);
+  const [jogoSelecionado, setJogoSelecionado] = useState<Jogo | null>(null);
 
   // Filtra jogos
   const jogosFiltrados = jogosMock.filter(jogo => {
@@ -132,6 +135,17 @@ export default function JogosPage() {
   const handleNovoJogo = (data: NovoJogoData) => {
     console.log('Novo jogo criado:', data);
     // Aqui você faria a chamada à API para criar o jogo
+  };
+
+  const handleInserirResultado = (jogo: Jogo) => {
+    setJogoSelecionado(jogo);
+    setModalResultadoAberto(true);
+  };
+
+  const handleSalvarResultado = (data: ResultadoData) => {
+    console.log('Resultado salvo para jogo:', jogoSelecionado?.id, data);
+    // Aqui você faria a chamada à API para salvar o resultado
+    // E atualizaria o status do jogo para 'finalizado'
   };
 
   return (
@@ -187,7 +201,7 @@ export default function JogosPage() {
 
         {/* Filtros */}
         <FilterTabs
-          options={['Todos', 'Agendados', 'Vivo', 'Finalizados']}
+          options={['Todos', 'Agendados', 'Ao Vivo', 'Finalizados']}
           active={filtroAtivo}
           onChange={setFiltroAtivo}
           className="mb-6"
@@ -222,6 +236,7 @@ export default function JogosPage() {
                     }}
                     venue={jogo.local}
                     status={jogo.status}
+                    onInserirResultado={() => handleInserirResultado(jogo)}
                   />
                 ))}
               </div>
@@ -249,6 +264,20 @@ export default function JogosPage() {
         onClose={() => setModalAberto(false)}
         onSubmit={handleNovoJogo}
       />
+
+      {/* Modal de Inserir Resultado */}
+      {jogoSelecionado && (
+        <NovoResultadoForm
+          isOpen={modalResultadoAberto}
+          onClose={() => {
+            setModalResultadoAberto(false);
+            setJogoSelecionado(null);
+          }}
+          onSubmit={handleSalvarResultado}
+          timeA={jogoSelecionado.timeA}
+          timeB={jogoSelecionado.timeB}
+        />
+      )}
     </div>
   );
 }

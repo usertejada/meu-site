@@ -15,6 +15,7 @@ interface MatchCardProps {
   awayTeam: Team;
   venue: string;
   status: 'agendado' | 'ao-vivo' | 'finalizado';
+  onInserirResultado?: () => void;
 }
 
 const statusConfig = {
@@ -45,7 +46,8 @@ const MatchCard: React.FC<MatchCardProps> = ({
   homeTeam,
   awayTeam,
   venue,
-  status
+  status,
+  onInserirResultado
 }) => {
   const statusStyle = statusConfig[status];
 
@@ -129,6 +131,18 @@ const MatchCard: React.FC<MatchCardProps> = ({
           </span>
         </div>
       </div>
+
+      {/* Botão Inserir Resultado - apenas para jogos agendados ou ao vivo */}
+      {(status === 'agendado' || status === 'ao-vivo') && onInserirResultado && (
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <button
+            onClick={onInserirResultado}
+            className="w-full py-2 px-4 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+          >
+            Inserir Resultado
+          </button>
+        </div>
+      )}
     </div>
   );
 };
