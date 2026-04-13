@@ -44,7 +44,7 @@ export default function AboutSection() {
               <span className="gradient-text">soluções criativas</span>
             </motion.h2>
 
-            <motion.div {...fadeUp(0.2)} className="flex flex-col gap-4 text-[var(--text-secondary)] text-[0.95rem] leading-relaxed">
+            <motion.div {...fadeUp(0.2)} className="flex flex-col gap-4 text-[var(--text-secondary)] text-[0.95rem] leading-relaxed text-justify">
               <p>
                 Sou um desenvolvedor Full Stack com mais de 3 anos de experiência
                 construindo aplicações web modernas, escaláveis e performáticas.
